@@ -1,24 +1,21 @@
 #include "LedControl.h"
 
-/*Now we need a LedControl to work with.
-pin 4 is connected to the DataIn
-pin 5 is connected to the CLK
-pin 6 is connected to LOAD / CS
-We only have a single MAX7219 */
+/*
+pin 4 conectado a entrada de Dados
+pin 5 conectado ao CLK
+pin 6 conectado ao CS
+*/
 
 LedControl lc=LedControl(4,6,5,1);
 float vrtotal;
 int linha;
 int coluna;
-/* we always wait a bit between updates of the display */
-unsigned long delaytime=500;
+
 void setup()
 {
-/* The MAX72XX is in power-saving mode on startup,
-we have to do a wakeup call */
-lc.shutdown(0,false); //* Set the brightness to a medium values */
-lc.setIntensity(0,4); //* and clear the display */
-lc.clearDisplay(0);
+lc.shutdown(0,false); //comando para ligar a matriz de led, caso esteja meio dormindo
+lc.setIntensity(0,4); //ajustando o brilho do led
+lc.clearDisplay(0); //limpando a matriz, para nao haver led aceso
 
 Serial.begin(57600);
 
@@ -26,13 +23,14 @@ Serial.begin(57600);
 
 void loop()
 {
-  float VR = analogRead(A1);
+  float VR = analogRead(A1);//leitura analógica da tensão
  
-  vrtotal = 1000*((3.8*VR)/1023);
+  vrtotal = 1000*((3.8*VR)/1023);/*conversão da leitura de bytes para obter a tensão
+  3.8 pois essa é a tensão da pilha e dividindo por quanto 1 byte equivale digitalmente*/
 
-  Serial.print(VR);
+  Serial.print(VR); //teste para ver a leitura no serial
   Serial.print("   ");
-  Serial.print(vrtotal);
+  Serial.print(vrtotal);//como a tensão é baixa, multiplicamos com mil e colocamos como mV
   Serial.println("mV");
 
   if(vrtotal>=1500){
